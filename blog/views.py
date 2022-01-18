@@ -4,11 +4,14 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView 
 from .forms import EmailPostForm, CommentForm
 from django.core.mail import send_mail 
+from taggit.models import Tag
+from django.db.models import Count 
 
 # Create your views here.
-def post_list(request, slug=None):
+def post_list(request, tag_slug=None):
   object_list = Post.published.all()
-  tag = None 
+  # tag_slug = None 
+  tag = None
   if tag_slug:
     tag = get_object_or_404(Tag, slug=tag_slug)
     object_list = object_list.filter(tags__in=[tag])
@@ -41,8 +44,10 @@ def post_detail(request, year, month, day, post):
   else:
     comment_form = CommentForm()
     
-
-  return render(request,'blog/post/detail.html',{'post':post,'comments':comments,'new_comment':new_comment,'comment_form':comment_form})
+  post_tags_ids = post.tags.values_list('id', flat=True)
+  similar_posts = Post.published.filter(tags__in=post_tags_ids).exclude(id=post.id)
+  similar_posts = similar_posts.annotate(same_tags=Count('tags')).order_by('same_tags','-publish')[:4]
+  return render(request,'blog/post/detail.html',{'post':post,'comments':comments,'new_comment':new_comment,'comment_form':comment_form,'similar_posts':similar_posts})
 
 
 
