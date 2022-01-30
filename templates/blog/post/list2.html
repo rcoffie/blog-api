@@ -1,0 +1,99 @@
+{% extends 'blog/main.html' %} {% load humanize %} {% block content %}
+
+
+<div class="container-fluid m-4 p-4">
+    <div class="row">
+        {% if hot_post %} {% for post in hot_post %}
+        <div class="col-md-7">
+
+            <div class="card mb-3">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="https://buildfire.com/wp-content/uploads/2018/01/visual-representation.png" class="img-fluid rounded-start" alt="...">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ post.title }}</h5>
+                            <p class="card-text"> {{post.body|truncatewords:30}}</p>
+                            <p class="card-text"><small class="text-muted"> {{ post.created |naturaltime }}</small></p>
+                            <p>
+                                {% for tag in post.tags.all %}
+
+                                <span class="badge bg-secondary">   <a class="text-decoration-none text-white" href="{% url 'blog:post_list_by_tag' tag.slug%}">
+                                  {{ tag.name }}
+                              </a></span> {% endfor %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %} {% endif %}
+
+        <div class="col-md-3">
+            <ol class="list-group list-group-numbered">
+                <li class="list-group-item">Cras justo odio</li>
+                <li class="list-group-item">Cras justo odio</li>
+                <li class="list-group-item">Cras justo odio</li>
+            </ol>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="container">
+    <div class="row ">
+
+
+
+        {% if posts %} {% for post in posts %}
+        <div class="col-md-3 my-2">
+
+            <div class="card">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTf0CkB9_mjQIgb_Jh52E9wXRtD3HYA1HLGxHOf1XVN_VMt3sEX6bk5ucmRYRdvbGLicOM&usqp=CAU" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <p class="card-text">
+                        <a class="text-decoration-none" href="{{ post.get_absolute_url }}">  {{ post.body|truncatewords:15}}  </a> </p>
+
+                </div>
+
+                <div class="card-footer text-muted">
+                    <small class="text-muted"> {{post.created|naturaltime}} | by {{post.author|title}} </small>
+                    <p>
+                        {% for tag in post.tags.all %}
+
+                        <span class="badge bg-secondary">   <a class="text-decoration-none text-white" href="{% url 'blog:post_list_by_tag' tag.slug%}">
+                    {{ tag.name }}
+                </a></span> {% endfor %}
+                    </p>
+                </div>
+
+
+            </div>
+
+        </div>
+        {% endfor %} {% endif %}
+
+        <nav aria-label="Page navigation example" class="center">
+            <ul class="pagination m-4 ">
+                {%if posts.has_previous %} {# whether the previous page exists #}
+                <li class="page-item"><a class="page-link" href="?page={{posts.previous_page_number}}">Previous</a></li>
+                {% endif %}
+                <li class="page-item"><a class="page-link" href="#">{{posts.number}}</a></li>
+
+                {%if posts.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{posts.next_page_number}}">Next</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+
+
+
+
+    </div>
+</div>
+
+
+
+{% endblock %}

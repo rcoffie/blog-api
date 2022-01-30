@@ -11,6 +11,7 @@ from blog.models import Post
 
 
 # Create your views here.
+
 def post_list(request, tag_slug=None):
   object_list = Post.published.all()
   # tag_slug = None 
@@ -27,6 +28,27 @@ def post_list(request, tag_slug=None):
   except EmptyPage:
     posts = paginator.page(paginator.num_pages)
   return render(request,'blog/post/list.html',{'posts':posts,'page':page,'tage':tag})
+
+
+
+
+def post_list2(request, tag_slug=None):
+  object_list = Post.published.all()
+  hot_post    = Post.objects.filter(hot=True)
+  # tag_slug = None 
+  tag = None
+  if tag_slug:
+    tag = get_object_or_404(Tag, slug=tag_slug)
+    object_list = object_list.filter(tags__in=[tag])
+  paginator = Paginator(object_list, 12)
+  page = request.GET.get('page')
+  try:
+    posts = paginator.page(page)
+  except PageNotAnInteger:
+    posts = paginator.page(1)
+  except EmptyPage:
+    posts = paginator.page(paginator.num_pages)
+  return render(request,'blog/post/list2.html',{'posts':posts,'page':page,'tage':tag,'hot_post':hot_post})
  
 """ class PostListView(ListView):
   querysey = Post.published.all()

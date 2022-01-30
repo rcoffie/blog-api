@@ -12,7 +12,7 @@
                     <div class="card-body">
                         <h5 class="card-title"> {{ post.title}}</h5>
                         <p class="card-text"> {{post.body }} </p>
-                        <p class="card-text"><small class="text-muted">{{ post.created }}</small></p>
+                        <p class="card-text"><small class="text-muted">{{ post.created|naturaltime }}</small></p>
                     </div>
                 </div>
             </div>
@@ -23,14 +23,14 @@
 
 <div class="container">
     <div class="row">
-        {% if posts %} {% for post in posts%}
+        {% if page_obj %} {% for post in page_obj %}
         <div class="col-md-4 p-4">
 
             <div class="card border rounded shadow-lg ">
                 <img src="https://developerhowto.com/wp-content/uploads/2018/12/phyton-django.jpg" class="card-img-top" alt="...">
                 <div class="card-body">
                     <p class="card-text">{{ post.body|truncatewords:30 }}</p>
-                    <p class="card-text"><small class="text-muted"> {{ post.created |naturalday}}</small></p>
+                    <p class="card-text"><small class="text-muted"> {{ post.created |naturaltime}}</small></p>
                 </div>
             </div>
 
@@ -38,8 +38,32 @@
         {% endfor %} {% else%} no blog post yet {% endif %}
 
 
+        <center>
+            <!--  {%if page_obj.has_previous %} {# whether the previous page exists #}
+            <a href="?page={{page_obj.previous_page_number}}">
+                <</a> {# link to the prev page #} {% endif %}
+                    <span>{{page_obj.number}}</span> {# the current page number #} {%if page_obj.has_next %} {# whether the next page exists #}
+                    <a href="?page={{page_obj.next_page_number}}">></a> {# link to the next page #} {% endif %} -->
 
+            <nav aria-label="Page navigation example" class="center">
+                <ul class="pagination m-4 ">
+                    {%if page_obj.has_previous %} {# whether the previous page exists #}
+                    <li class="page-item"><a class="page-link" href="?page={{page_obj.previous_page_number}}">Previous</a></li>
+                    {% endif %}
+                    <li class="page-item"><a class="page-link" href="#">{{page_obj.number}}</a></li>
+
+                    {%if page_obj.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{page_obj.next_page_number}}">Next</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+
+        </center>
     </div>
+
+
+
+
 </div>
 
 
