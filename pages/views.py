@@ -6,7 +6,7 @@ from django.core.paginator import Paginator
 
 def home(request):
   headlines_post = Post.objects.filter(headline_post=True)
-  posts = Post.objects.filter(featured_post=True)
+  posts = Post.objects.filter(featured_post=True)[:6]
   p = Paginator(posts,6)
   page_number = request.GET.get('page')
   try:

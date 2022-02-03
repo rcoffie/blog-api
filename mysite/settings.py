@@ -49,8 +49,13 @@ INSTALLED_APPS = [
 
     #django restframe work 
     'rest_framework',
+    'crispy_forms',
     
 ]
+
+
+CRISPY_TEMPLATE_PACK = 'bootstrap'
+CRISPY_FAIL_SILENTLY = not DEBUG
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

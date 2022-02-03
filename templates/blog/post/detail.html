@@ -1,46 +1,65 @@
-{% extends 'blog/base.html' %} {% load blog_tags %} {% block title %} {{post.title}} {% endblock %} {% block content %}
+{% extends 'blog/main.html' %} {% load crispy_forms_tags %} {% block content %}
 
-<h1>{{ post.title }}</h1>
+<div class="container">
+    <div class="row m-4">
+        <div class="col-md-8">
 
-<p> Published {{ post.publish }} by {{post.author}}</p>
-{{post.body | linebreaks}}
+            <img src="https://www.shuup.com/wp-content/uploads/2017/12/python-plus-django-1.jpg" class="img-thumbnail" alt="...">
+            <p>
+                <h4>{{post.title }} </h4>
+                <span> <small> {{post.publish}} by {{post.author}} </small> </span>
+            </p>
 
-<p>
-    <a href="{% url 'blog:post_share' post.id %}"> Share this  post</a>
-</p>
-<h2> Similar posts</h2>
-{% for post in similar_posts%}
-<p>
-    <a href="{{post.get_absolute_url}}"> {{ post.title}}</a>
-</p>
-{% empty%} there are no similar post yet. {% endfor %}
-<p> {% with comments.count as total_comments %}
-    <h2>
-        {{total_comments}} comment {{total_comments|pluralize }}
-    </h2>
+            <p>
+                {{ post.body | linebreaks }}
 
-    {% endwith %} {% for comment in comments %}
-    <div class="">
-        <p>
-            Comment {{ forloop.counter}} by {{ comment.name}} {{ comment.created}}
-        </p>
-        <!-- {{ comment.body | linebreaks}} -->
-        {{ post.body | markdown}}
+                <span>
+                    <a class="btn btn-success" href="{% url 'blog:post_share' post.id %}" target="_blank" rel="noopener noreferrer">  <i class="bi bi-share">  </i> Share Post </a>
+                </span>
+            </p>
+
+
+            <p>
+                <h2> Similar posts</h2>
+                {% for post in similar_posts%}
+
+                <span class="badge "> <a class="text-decoration-none" href="{{ post.get_absolute_url }}"> {{ post.title}}</a></span>{% empty %} there are no similar post yet {% endfor %}
+            </p>
+
+
+
+            <div class="card">
+                {% with comments.count as total_comments %}
+                <div class="card-header">
+                    {{ total_comments }} comment {{ total_comments | pluralize }}
+                </div>
+                {% endwith %} {% for comment in comments %}
+                <div class="card-body">
+
+                    <blockquote class="blockquote mb-0">
+                        <p> {{ comment.body }} </p>
+                        <footer class="blockquote-footer">{{comment.name }} <cite title="Source Title"> {{ comment.created }}</cite></footer>
+                    </blockquote>
+                </div>
+                {% endfor%}
+            </div>
+
+            <div class="m-2 p-4 border border-5">
+
+                {% if new_comment %}
+                <h3>you comment has been added</h3>
+                {% endif %} {% crispy comment_form %}
+
+
+
+            </div>
+
+            <div class="col-md-3">
+
+            </div>
+        </div>
     </div>
-    {% empty %}
-    <p> No comment for this post yet </p>
-    {% endfor %}
-</p>
 
-<p>
-    {% if new_comment %}
-    <h2>Your comment has been added </h2>
-    {% else %}
-    <h2>Add a new comment</h2>
-    <form action="" method="POST">
-        {% csrf_token %} {{ comment_form.as_p}}
-        <p> <input type="submit" value="Add Comment"> </p>
-    </form>
-    {% endif %}
-</p>
-{% endblock %}
+
+
+    {% endblock %}

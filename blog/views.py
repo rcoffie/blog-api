@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Post
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger 
 from django.views.generic import ListView 
@@ -12,7 +12,7 @@ from blog.models import Post
 
 # Create your views here.
 
-def post_list(request, tag_slug=None):
+def post_list2(request, tag_slug=None):
   object_list = Post.published.all()
   # tag_slug = None 
   tag = None
@@ -27,12 +27,12 @@ def post_list(request, tag_slug=None):
     posts = paginator.page(1)
   except EmptyPage:
     posts = paginator.page(paginator.num_pages)
-  return render(request,'blog/post/list.html',{'posts':posts,'page':page,'tage':tag})
+  return render(request,'blog/post/list22.html',{'posts':posts,'page':page,'tage':tag})
 
 
 
 
-def post_list2(request, tag_slug=None):
+def post_list(request, tag_slug=None):
   object_list = Post.published.all()
   hot_post    = Post.objects.filter(hot=True)
   # tag_slug = None 
@@ -48,7 +48,7 @@ def post_list2(request, tag_slug=None):
     posts = paginator.page(1)
   except EmptyPage:
     posts = paginator.page(paginator.num_pages)
-  return render(request,'blog/post/list2.html',{'posts':posts,'page':page,'tage':tag,'hot_post':hot_post})
+  return render(request,'blog/post/list.html',{'posts':posts,'page':page,'tage':tag,'hot_post':hot_post})
  
 """ class PostListView(ListView):
   querysey = Post.published.all()
@@ -57,6 +57,7 @@ def post_list2(request, tag_slug=None):
   template_name = 'blog/post/list.html' """
 
 def post_detail(request, year, month, day, post):
+  comment_form = CommentForm()
   post = get_object_or_404(Post, slug=post, status='published',publish__year=year, publish__month=month, publish__day=day)
   comments = post.comments.filter(active=True)
   new_comment = None
@@ -73,6 +74,32 @@ def post_detail(request, year, month, day, post):
   similar_posts = Post.published.filter(tags__in=post_tags_ids).exclude(id=post.id)
   similar_posts = similar_posts.annotate(same_tags=Count('tags')).order_by('same_tags','-publish')[:4]
   return render(request,'blog/post/detail.html',{'post':post,'comments':comments,'new_comment':new_comment,'comment_form':comment_form,'similar_posts':similar_posts})
+
+
+def detailt(request):
+
+  return render(request,'blog/post/detail2.html')
+
+def post_detail2(request, year, month, day, post):
+  post = get_object_or_404(Post, slug=post, status='published',publish__year=year, publish__month=month, publish__day=day)
+  comments = post.comments.filter(active=True)
+  new_comment = None
+  comment_form = CommentForm()
+  if request.method == 'POST':
+    comment_form = CommentForm(request.POST)
+    if comment_form.is_valid():
+      new_comment = comment_form.save(commit=False)
+      new_comment.post = post 
+      new_comment.save()
+      return redirect('post_list')
+  else:
+    comment_form = CommentForm()
+    
+  post_tags_ids = post.tags.values_list('id', flat=True)
+  similar_posts = Post.published.filter(tags__in=post_tags_ids).exclude(id=post.id)
+  similar_posts = similar_posts.annotate(same_tags=Count('tags')).order_by('same_tags','-publish')[:4]
+  return render(request,'blog/post/detail.html',{'post':post,'comments':comments,'new_comment':new_comment,'comment_form':comment_form,'similar_posts':similar_posts,'comment_form':comment_form,})
+
 
 
 
