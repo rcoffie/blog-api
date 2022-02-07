@@ -8,6 +8,7 @@ from taggit.models import Tag
 from django.db.models import Count 
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from blog.models import Post 
+from django.contrib import messages
 
 
 # Create your views here.
@@ -107,6 +108,7 @@ def post_share(request, post_id):
 
   post = get_object_or_404(Post, id=post_id,status='published')
   sent = False
+  form = EmailPostForm()
       
 
   if request.method == 'POST':

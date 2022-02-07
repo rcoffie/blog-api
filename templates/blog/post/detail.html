@@ -48,7 +48,13 @@
 
                 {% if new_comment %}
                 <h3>you comment has been added</h3>
-                {% endif %} {% crispy comment_form %}
+                {% endif %}
+
+                <form action="" method="POST">
+                    {% csrf_token %} {{ comment_form | crispy }}
+
+                    <input type="submit" value="Comment" class="btn btn-primary">
+                </form>
 
 
 
