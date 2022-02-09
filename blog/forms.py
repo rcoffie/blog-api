@@ -9,10 +9,10 @@ from crispy_forms.bootstrap import InlineRadios
 
 class EmailPostForm(forms.Form):
 
-  name = forms.CharField(max_length=25,widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Name'}))
-  email = forms.EmailField(max_length=25,label = '',widget=forms.EmailInput(attrs={'class':'form-control','placeholder':'Email'}))
-  to    = forms.EmailField(max_length=25,widget=forms.EmailInput(attrs={'class':'form-control','placeholder':'To'}))
-  comments = forms.CharField(required=False,widget=forms.Textarea(attrs={'class':'form-control','placeholder':'comments'}))
+  name = forms.CharField(max_length=25, label = '', widget=forms.TextInput(attrs={'class':'form-control my-2','placeholder':'Name'}))
+  email = forms.EmailField(max_length=25,label = '',widget=forms.EmailInput(attrs={'class':'form-control my-2','placeholder':'Email'}))
+  to    = forms.EmailField(max_length=25, label='',widget=forms.EmailInput(attrs={'class':'form-control my-2','placeholder':'To'}))
+  comments = forms.CharField(required=False, label="",widget=forms.Textarea(attrs={'class':'form-control my-2','placeholder':'comments (optional)'}))
 
 
 

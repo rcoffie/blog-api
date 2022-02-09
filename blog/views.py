@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRedirect
 from .models import Post
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger 
 from django.views.generic import ListView 
@@ -9,6 +9,7 @@ from django.db.models import Count
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from blog.models import Post 
 from django.contrib import messages
+from django.urls import reverse
 
 
 # Create your views here.
@@ -63,11 +64,14 @@ def post_detail(request, year, month, day, post):
   comments = post.comments.filter(active=True)
   new_comment = None
   if request.method == 'POST':
-    comment_form = CommentForm(data=request.POST)
+    comment_form = CommentForm(request.POST)
     if comment_form.is_valid():
       new_comment = comment_form.save(commit=False)
       new_comment.post = post 
       new_comment.save()
+      return redirect('blog:post_list')
+      # return HttpResponseRedirect(reverse('blog:post_detail', args=[post]))
+    
   else:
     comment_form = CommentForm()
     
@@ -89,13 +93,13 @@ def post_detail2(request, year, month, day, post):
   if request.method == 'POST':
     comment_form = CommentForm(request.POST)
     if comment_form.is_valid():
-      new_comment = comment_form.save(commit=False)
-      new_comment.post = post 
-      new_comment.save()
-      return redirect('post_list')
-  else:
-    comment_form = CommentForm()
-    
+      comment_form.save(commit=False)
+      comment_form.post = post 
+      comment.save()
+      return redirect('blog:post_list')
+    else:
+      comment_form = CommentForm()
+  
   post_tags_ids = post.tags.values_list('id', flat=True)
   similar_posts = Post.published.filter(tags__in=post_tags_ids).exclude(id=post.id)
   similar_posts = similar_posts.annotate(same_tags=Count('tags')).order_by('same_tags','-publish')[:4]
@@ -121,6 +125,7 @@ def post_share(request, post_id):
       f"{cd['name']}\'s comments: {cd['comments']}"
       send_mail(subject, message, 'admin@a.com', [cd['to']])
       sent = True
+      
   else: 
     form = EmailPostForm()
   return render(request, 'blog/post/share.html',{'post':post,'form':form,'sent':sent})

@@ -1,4 +1,4 @@
-{% extends 'blog/main.html' %} {% load humanize %} {% block content %}
+{% extends 'blog/main.html' %} {% load blog_tags %} {% load humanize %} {% block content %}
 
 
 <div class="container-fluid m-4 p-4">
@@ -31,11 +31,10 @@
         {% endfor %} {% endif %}
 
         <div class="col-md-3">
-            <ol class="list-group list-group-numbered">
-                <li class="list-group-item">Cras justo odio</li>
-                <li class="list-group-item">Cras justo odio</li>
-                <li class="list-group-item">Cras justo odio</li>
-            </ol>
+
+
+            {% include 'blog/sidebar.html' %}
+
         </div>
 
     </div>
